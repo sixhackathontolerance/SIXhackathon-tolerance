@@ -32,6 +32,11 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     }
 
     @Bean
+    public ToleranceChecker toleranceChecker() {
+        return new ToleranceChecker();
+    }
+
+    @Bean
     QueueWorker queueWorker() {
         return new QueueWorker();
     }
