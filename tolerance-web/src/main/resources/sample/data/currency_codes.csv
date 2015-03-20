@@ -1,0 +1,189 @@
+﻿ID;Symbol;Description
+1;CHF;Swiss Franc
+20;ZAR;Rand
+22;NAD;Namibia Dollar
+23;AFN;Afghani
+32;ALL;Lek
+36;DZD;Algerian Dinar
+70;ANG;Netherl.Antillian Guilder
+72;BAM;Convertible Marks
+74;SAR;Saudi Riyal
+84;ARS;Argentine Peso
+86;AWG;Aruban Guilder
+88;AUD;Australian Dollar
+102;BSD;Bahamian Dollar
+105;AED;UAE Dirham
+106;BHD;Bahraini Dinar
+108;BBD;Barbados Dollar
+110;BDT;Taka
+130;BMD;Bermudian Dollar
+134;BTN;Ngultrum
+139;MMK;Kyat
+143;BOB;Boliviano
+148;BWP;Pula
+154;BND;Brunei Dollar
+155;BRL;Brazilian Real
+161;BGN;Lev
+162;BIF;Burundi Franc
+184;CAD;Canadian Dollar
+194;CVE;Cabo Verde Escudo
+202;KYD;Cayman Islands Dollar
+206;LKR;Sri Lanka Rupee
+212;CLP;Chilean Peso
+213;CLF;Unidad de Fomento
+220;CNY;Renminbi Yuan
+221;CNH;Offshore Renminbi Yuan
+230;COP;Colombian Peso
+231;COU;Unidad de Valor Real
+234;KMF;Comoro Franc
+245;CDF;Franc Congolais
+246;KPW;North Korean Won
+248;KRW;Won
+252;CRC;Costa Rica Colon
+260;CUP;Cuban Peso
+261;CUC;Peso Convertible
+272;DKK;Danish Krone
+280;DOP;Dominican Peso
+290;EGP;Egyptian Pound
+333;USD;US Dollar
+340;ETB;Ethiopian Birr
+341;ERN;Nakfa
+342;XBA;Eurco
+344;FKP;Falkland Isl.Pound
+348;FJD;Fiji Dollar
+356;INR;Indian Rupee
+366;TWD;New Taiwan Dollar
+384;XPF;CFP Franc
+386;XOF;CFA Franc BCEAO
+387;XAF;CFA-Franc BEAC
+392;GMD;Dalasi
+395;GHS;Ghana Cedi
+398;GIP;Gibraltar Pound
+402;GBP;Pound Sterling
+408;SHP;St.Helena Pound
+415;XCD;East Caribbean Dollar
+420;GTQ;Quetzal
+425;GNF;Guinea Franc
+436;GYD;Guyana Dollar
+456;HTG;Gourde
+464;HNL;Lempira
+468;BZD;Belize Dollar
+470;HKD;Hong Kong Dollar
+474;HUF;Forint
+484;MXN;Mexican Peso
+500;IDR;Rupiah
+504;IQD;Iraqi Dinar
+506;IRR;Iranian Rial
+514;ISK;Iceland Krona
+519;ILS;New Israeli Sheqel
+532;JMD;Jamaican Dollar
+534;JPY;Yen
+538;JOD;Jordanian Dinar
+546;KES;Kenyan Shilling
+548;KHR;Riel
+550;KWD;Kuwaiti Dinar
+556;LAK;Kip
+558;LSL;Loti
+560;LBP;Lebanese Pound
+564;LRD;Liberian Dollar
+568;LYD;Libyan Dinar
+580;MOP;Pataca
+585;MGA;Malagascy Ariary
+586;MKD;Macedonian Denar
+590;MWK;Kwacha
+594;MYR;Malaysian Ringgit
+595;MVR;Rufiyaa
+608;MAD;Moroccan Dirham
+618;OMR;Rial Omani
+620;MRO;Ouguiya
+624;MUR;Mauritius Rupee
+634;MNT;Tugrik
+637;MZN;Mozambique Metical
+644;NPR;Nepalese Rupee
+648;NIO;Cordoba
+656;NGN;Naira
+662;NOK;Norwegian Krone
+682;VUV;Vatu
+686;NZD;New Zealand Dollar
+696;TJS;Somoni
+698;UZS;Uzbekistan Sum
+700;BYR;Belarussian Ruble
+706;UGX;Uganda Shilling
+714;PKR;Pakistan Rupee
+718;PAB;Balboa
+722;PGK;Kina
+726;PYG;Guarani
+728;SSP;South Sudanese Pound
+746;PEN;Nuevo sol
+748;PHP;Philippine Peso
+753;PLN;Zloty
+769;QAR;Qatari Rial
+787;;Zimbabwe Dollar notional
+791;ZWL;Zimbabwe Dollar
+797;RON;Romanian Leu
+800;RWF;Rwanda Franc
+805;UAH;Grivnya
+808;SBD;Solomon Isl. Dollar
+812;WST;Tala
+813;MXV;Unidad de Inversion (UDI)
+814;EUR;Euro
+815;BOV;Mvdol
+824;SVC;El Salvador Colon
+826;STD;Dobra
+836;SCR;Seychelles Rupee
+842;SLL;Leone
+846;SGD;Singapore Dollar
+850;SOS;Somali Shilling
+854;DJF;Djibouti Franc
+860;RUB;Russian Ruble
+861;SDG;Sudanese Pound (new)
+864;SEK;Swedish Krona
+869;SRD;Surinam Dollar
+872;SZL;Lilangeni
+876;SYP;Syrian Pound
+888;TZS;Tanzanian Shilling
+893;RSD;Serbian Dinar
+898;CZK;Czech Koruna
+901;;DEM/CHF, f.exch.rate (for SWX)
+902;;GBP/CHF, f.exch.rate (for SWX)
+903;;USD/CHF, f.exch.rate (for SWX)
+904;THB;Baht
+905;;Gold Pound Sterling/CHF, f.exch.rate
+906;;Austro-Hung. Gold Florin/CHF, f.exch.rate
+907;;CAD/CHF, f.exch.rate (for SWX)
+909;;USD/CHF, f.exch.rate
+910;XXX;Non-Currency
+911;;Various Currencies
+913;AZN;Azerbaijanian Manat
+914;;Thai Baht offshore
+920;TOP;Pa'anga
+921;TRY;Turkish Lira
+922;TTD;Trinidad & Tobago Dollar
+924;TND;Tunisian Dinar
+925;;EUR/CHF,f.exch.rate (for SWX)
+926;;JPY/CHF, f.exch.rate (for SWX)
+942;KGS;Kyrgyzstan Som
+944;MDL;Moldovan Leu
+945;KZT;Tenge
+946;XDR;Special Drawing Rights (SDR)
+947;;Corona norvegese/DEM (vec.)
+949;UYU;Peso uruguayo
+950;AMD;Armenian Dram
+956;UYI;Uruguay Peso en Unidades Indexadas (URUIURUI)
+958;TMT;Turkmenistan New Manat
+961;VEF;Bolivar
+964;VND;Dong
+965;XUA;ADB Unit of Account
+967;ZMW;Zambian Kwacha
+972;YER;Yemeni Rial
+977;HRK;Kuna
+981;GEL;Lari
+984;AOA;Kwanza
+988;;Pound f.issues after deval.67/DEM
+989;;Gold Franc/CHF, f.exch.rate
+992;;Ounce of fine gold/USD
+993;XAU;Gold
+994;XPD;Palladium
+995;XPT;Platinum
+996;XAG;Silver
+999;;Nominal currency for coins
