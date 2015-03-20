@@ -1,30 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello WebSocket</title>
+    <title>tolerance</title>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
     <script src="stomp.js"></script>
     <script type="text/javascript">
         var stompClient = null;
+        var username = null;
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
+            if(connected) {
+           	 $('#conversationDiv').show();
+           	 $('#name').html(username);
+            } else {
+            	$('#conversationDiv').hide();
+            	$('#outlier').hide();
+            	
+            }
         }
 
         function connect() {
             var socket = new SockJS('/hello');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function(frame) {
+                username = frame.headers['user-name']
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe('/topic/greetings', function(greeting){
                     showGreeting(JSON.parse(greeting.body).content);
                 });
-                stompClient.subscribe('/user/admin/outlier', function(outlier) {
-                	alert(JSON.parse(outlier));
+                stompClient.subscribe('/user/' + username + '/outlier', function(outlier) {
+                	$('#outlier').show();
+                	// $('info').html(JSON.parse(outlier.body));
+                	$('#info').text(outlier);
                 });
             });
         }
@@ -39,15 +50,11 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
+            $('#outlier').hide();
             stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
         }
 
         function showGreeting(message) {
-            var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(message));
-            response.appendChild(p);
         }
     </script>
 </head>
@@ -59,10 +66,20 @@
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
     </div>
+    
     <div id="conversationDiv">
-        <label>What is your name?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
-        <p id="response"></p>
+        <strong><label id="name"></label></strong>
+        <p>&nbsp;</p>
+        
+       <div id="outlier">
+       <br>
+       	Price Information:
+       	<pre id="info">
+       	</pre>
+       	
+        <button id="done" onclick="sendName();">Done</button>
+        
+        </div>
     </div>
 </div>
 </body>
