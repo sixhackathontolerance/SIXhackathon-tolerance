@@ -1,0 +1,27 @@
+1;TRA;Trade
+2;BID;Bid
+3;ASK;Ask
+4;MID;Mid
+5;ISS;Issue
+6;REP;Redemption Price
+7;SET;Settlement
+8;ETO;Single turnover Off-Market
+9;LIS;Listino
+11;OIN;Open interest
+12;KAS;Cash
+13;JYI;Annualized distribution
+14;EAR;Earnings
+16;VOL;Volume
+17;TUR;Turnover
+38;VLY;Historical Volatility (30 days)
+61;ADA;Average daily volume
+70;HIS;Historical Volatility (180 days)
+71;HIV;Rolling calender year
+79;HVO;Historical Volatility (90 days)
+112;EUM;Part of turnover
+134;UOO;Turnover ON + OFF
+247;PSP;Percentage Spread Bid/Ask
+253;AHT;Number of trading days
+452;TIK;Number of Ticks
+688;1WV;1 week average daily volatility
+689;HVY;Historical volatility year to date
