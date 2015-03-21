@@ -16,6 +16,7 @@
     <script src="js/handlebars-v3.0.0.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/sockjs.min.js"></script>
+    <script src="js/chartjs.min.js"></script>
     <script src="js/stomp.js"></script>
 
     <script type="text/javascript">
@@ -27,9 +28,13 @@
     	var templateNews;
     	var templateUsers;
         
+    	var ctx;
+    	var myLineChart = null;
+    	
         $(function() {
 	        $("#work_idle").hide();
 	        $("#verified").attr("disabled", true);
+	        ctx = document.getElementById("myChart").getContext("2d");
             
         	templatePrices = Handlebars.compile($("#template-prices").html());
         	templateNews = Handlebars.compile($("#template-news").html());
@@ -40,6 +45,34 @@
     	function handleOutlier(outlier) {
         	var a = JSON.parse(outlier.body);
         	outlierGSN = a.price.gsn;
+        	
+        	var chartLables = [];
+        	var chartData = [];
+        	for (var i in a.prices) {
+        		  chartLables.push(i);
+        		  chartData.push(a.prices[i].value);
+        	}
+        	
+        	var data = {
+        		    labels: chartLables,
+        		    datasets: [
+        		        {
+        		            label: "Prices",
+        		            fillColor: "rgba(151,187,205,0.2)",
+        		            strokeColor: "rgba(151,187,205,1)",
+        		            pointColor: "rgba(151,187,205,1)",
+        		            pointStrokeColor: "#fff",
+        		            pointHighlightFill: "#fff",
+        		            pointHighlightStroke: "rgba(151,187,205,1)",
+        		            data: chartData
+        		        }
+        		    ]
+        		};
+        	var options;
+        	if (myLineChart != null) {
+        		myLineChart.destroy();
+        	} 
+        	myLineChart = new Chart(ctx).Line(data, options);
             $('#price_table').html(templatePrices(a));
             $('#news_table').html(templateNews(a));
             $("#work_active").fadeIn( 1600, "linear");
@@ -141,7 +174,6 @@
 <br/>
 
 <div class="container">
-
 	<div class="row">
 		<div class="col-sm-8">
 			<h3>Work</h3>
@@ -149,50 +181,40 @@
 			<div id="work_active">
 			
 				<div class="row">
-				
-				<div class="col-sm-4">
-					
-				<h4>Probability</h4> 
-				
-				</div>
-				<div class="col-sm-8"><h4>Chart</h4></div>
-				
+					<div class="col-sm-4">
+						<h4>Probability</h4> 
+					</div>
+					<div class="col-sm-8">
+						<h4>Chart</h4>
+						<canvas id="myChart" width="450" height="150"></canvas>
+					</div>
 				</div>
 				
 				<h4>Prices</h4>
-				
-				<div class="table-responsive" id="price_table">
-	
-				</div>
+				<div class="table-responsive" id="price_table"></div>
 				
 				<h4>News</h4>
-				
-				<div class="table-responsive" id="news_table">
-	
-				</div>
+				<div class="table-responsive" id="news_table"></div>
 			
 			</div>
+			
 			<div id="work_idle" class="text-center">
 				<h4>N o t h i n g &nbsp; t o &nbsp; d o &nbsp; a t &nbsp; t h e &nbsp; m o m e n t . . .</h4>
 			</div>
 		</div>
-		<div class="col-sm-4"><h3>Queue</h3>
+		<div class="col-sm-4">
+			<h3>Queue</h3>
 		
-		<p id="queueSize"></p>
+			<p id="queueSize"></p>
 		
-		<h3>User Score</h3>
+			<h3>User Score</h3>
 		
-					<div class="table-responsive" id="users_table">
-	
-				</div>
+			<div class="table-responsive" id="users_table"></div>
 		
 		</div>
 	</div>
-<div>
-    
+</div>    
 
-</div>
-</div>
 
 <!-- Templates -->
 
