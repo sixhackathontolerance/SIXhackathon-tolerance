@@ -64,7 +64,7 @@ public class QueueWorker extends Thread {
     @Override
     public void run() {
         System.out.println("queue worker start");
-        populateQueue();
+        //populateQueue();
         while (true) {
 
             if (controller.queueEmpty()) {
