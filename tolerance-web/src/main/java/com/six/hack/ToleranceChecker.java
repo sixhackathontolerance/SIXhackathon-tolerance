@@ -25,8 +25,43 @@ public class ToleranceChecker extends Thread {
     @Autowired
     private WebController controller;
     private SimpleMahout simpleMahout;
+    List<String> securities = Arrays.asList("158124",
+    "208166",
+    "275000",
+    "275001",
+    "275013",
+    "275015",
+    "275018",
+    "275191",
+    "340809",
+    "499048",
+    "698366",
+    "897789",
+    "946684",
+    "946687",
+    "946692",
+    "946868",
+    "968880",
+    "968984",
+    "998032",
+    "998089",
+    "998313");
+    
+    List<String> errorSecuritiesOnly = Arrays.asList(
+    "208166"
+    ,"275000"
+    //,"275015"
+    ,"275191"
+    ,"340809"
+    //,"499048"
+    //,"698366"
+    ,"897789"
+    ,"946868"
+    //"968880"
+    );
     public ToleranceChecker() {
-    	simpleMahout = new SimpleMahout(Arrays.asList("897789","275191"));
+    	//simpleMahout = new SimpleMahout(Arrays.asList("897789","275191"));
+    	simpleMahout = new SimpleMahout(errorSecuritiesOnly);
     }
 
     @PostConstruct
