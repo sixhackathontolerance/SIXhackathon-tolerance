@@ -1,5 +1,18 @@
 package com.six.hack;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -14,21 +27,45 @@ public class QueueWorker extends Thread {
     private ParticipantRepository repository;
 
     public QueueWorker() {
+    }
+
+    @PostConstruct
+    public void startWorker() {
         start();
+    }
+
+    private void populateQueue() {
+        Set<Long> outlierGSN = new HashSet<Long>();
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
+                    "/sample/data/Solution_short.csv")));
+            while (reader.ready()) {
+                final String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                if (line.startsWith("GSN")) {
+                    continue;
+                }
+
+                final String[] cols = line.split(";");
+                outlierGSN.add(Long.valueOf(cols[0]));
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (Price price : new PriceStream()) {
+            if (outlierGSN.contains(Long.valueOf(price.getGsn()))) {
+                queue.offer(new Outlier(price));
+            }
+        }
     }
 
     @Override
     public void run() {
-        while (true) {
-            if (queue == null) {
-                sleep();
-            } else {
-                for (Price price : new PriceStream()) {
-                    queue.offer(new Outlier(price));
-                }
-                break;
-            }
-        }
+        System.out.println("queue worker start");
+        populateQueue();
         while (true) {
             Outlier outlier = queue.next();
             if (outlier == null) {
@@ -37,9 +74,12 @@ public class QueueWorker extends Thread {
                 boolean found = false;
                 for (Participant participant : repository.getActiveSessions()) {
                     if (participant.ready()) {
+                        outlier.setPrices(getRange(outlier.getPrice()));
+                        outlier.setNews(getNews(outlier.getPrice()));
                         participant.give(outlier);
                         messagingTemplate.convertAndSendToUser(participant.getName(), "/outlier", outlier);
                         System.out.println("queue worker handover task to user " + participant.getName());
+                        messagingTemplate.convertAndSend("/topic/queuesize", "{\"size\": " + queue.size() + "}");
                         found = true;
                         break;
                     }
@@ -51,6 +91,65 @@ public class QueueWorker extends Thread {
                 }
             }
         }
+    }
+
+    private List<News> getNews(final Price outlierPrice) {
+        final List<News> news = new ArrayList<News>();
+        try {
+            int counter = 0;
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
+                    "/sample/data/news_stream.csv")));
+            while (reader.ready()) {
+                final String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                if (line.startsWith("#date;time;headline")) {
+                    continue;
+                }
+                final String[] cols = line.split(";");
+                final Date date = new SimpleDateFormat("yyyy-MM-dd").parse(cols[0]);
+                if (counter < 3) {
+                    news.add(new News(date, cols[2]));
+                } else {
+                    break;
+                }
+                counter++;
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return news;
+    }
+
+    private List<Price> getRange(final Price outlierPrice) {
+        CircularFifoQueue<Price> beforePrices = new CircularFifoQueue<>(3);
+        int afterCounter = 0;
+        List<Price> prices = new ArrayList<Price>();
+        for (Price price : new PriceStream()) {
+            if (price.getMarketCode() == outlierPrice.getMarketCode()
+                    && price.getCurrencyCode() == outlierPrice.getCurrencyCode()
+                    && price.getValorNumber() == outlierPrice.getValorNumber()
+                    && price.getValueType() == outlierPrice.getValueType()
+                    && price.getStatisticType() == outlierPrice.getStatisticType()) {
+
+                if (price.getGsn() == outlierPrice.getGsn()) {
+                    afterCounter++;
+                    prices.addAll(beforePrices);
+                }
+                if (afterCounter > 0) {
+                    prices.add(price);
+                    afterCounter++;
+                } else {
+                    beforePrices.add(price);
+                }
+                if (afterCounter > 4) {
+                    break;
+                }
+            }
+        }
+        return prices;
     }
 
     private void sleep() {

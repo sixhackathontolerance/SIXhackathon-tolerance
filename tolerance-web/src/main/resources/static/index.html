@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
 	
     <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/handlebars-v3.0.0.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/sockjs.min.js"></script>
     <script src="js/stomp.js"></script>
@@ -20,6 +21,42 @@
     <script type="text/javascript">
         var stompClient = null;
         var username = null;
+        var outlierGSN = null;
+        
+    	var templatePrices;
+    	var templateNews;
+    	var templateUsers;
+        
+        $(function() {
+	        $("#work_idle").hide();
+	        
+        	templatePrices = Handlebars.compile($("#template-prices").html());
+        	templateNews = Handlebars.compile($("#template-news").html());
+        	templateUsers = Handlebars.compile($("#template-users").html());
+        	
+        });
+        
+    	function handleOutlier(outlier) {
+        	var a = JSON.parse(outlier.body);
+        	outlierGSN = a.price.gsn;
+            $('#price_table').html(templatePrices(a));
+            $('#news_table').html(templateNews(a));
+            $("#work_active").fadeIn( 1600, "linear");
+            $("#work_idle").fadeOut( 1600, "linear");
+    	}
+        
+        Handlebars.registerHelper('ifItemSelected', function(priceGSN, options) {
+      	  if (outlierGSN == priceGSN) {
+      	    return options.fn(this);
+      	  } else {
+      	   	return options.inverse(this);
+      	  }
+      	});
+        
+        Handlebars.registerHelper('formatDate', function(milliseconds, options) {
+        	var d = new Date(milliseconds);
+        	return d.toLocaleDateString();
+        });
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
@@ -27,7 +64,7 @@
             if(username == null) {
 	            $('#username').html('<strong>Hello</strong>');
             } else {
-	            $('#username').text('<strong>Hello ' + username + '</strong>');
+	            $('#username').html('<strong>Hello ' + username + '</strong>');
             }
             if(connected) {
            	 $('#conversationDiv').show();
@@ -49,10 +86,11 @@
                 stompClient.subscribe('/topic/greetings', function(greeting){
                     showGreeting(JSON.parse(greeting.body).content);
                 });
+                stompClient.subscribe('/topic/queuesize', function(queue){
+                    $('#queueSize').text(JSON.parse(queue.body).size);
+                });
                 stompClient.subscribe('/user/' + username + '/outlier', function(outlier) {
-                	$('#outlier').show();
-                	// $('info').html(JSON.parse(outlier.body));
-                	$('#info').text(outlier);
+                	handleOutlier(outlier);
                 });
             });
         }
@@ -65,14 +103,15 @@
             console.log("Disconnected");
         }
 
-        function sendName() {
-            var name = document.getElementById('name').value;
-            $('#outlier').hide();
-            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+        function sendVerified() {
+           $("#work_active").fadeOut( 1600, "linear");
+           $("#work_idle").fadeIn( 1600, "linear");
+           stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
         }
 
         function showGreeting(message) {
         }
+        
     </script>
 </head>
 <body onload="disconnect()">
@@ -93,7 +132,7 @@
             <li><p class="navbar-text" id="username"></p></li>
             <li>        
             
-            <button id="done" class="btn btn-default navbar-btn" onclick="sendName();">verified</button>
+            <button id="done" class="btn btn-default navbar-btn" onclick="sendVerified();">verified</button>
             <button id="connect" class="btn btn-default navbar-btn" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" class="btn btn-default navbar-btn" onclick="disconnect();">Disconnect</button></li>
           </ul>
@@ -102,8 +141,7 @@
     </nav>
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<br/>
 
 <div class="container">
 
@@ -111,57 +149,105 @@
 		<div class="col-sm-8">
 			<h3>Work</h3>
 			
-			<div class="row">
+			<div id="work_active">
 			
-			<div class="col-sm-4">
+				<div class="row">
 				
-			<h4>Probability</h4> 
+				<div class="col-sm-4">
+					
+				<h4>Probability</h4> 
+				
+				</div>
+				<div class="col-sm-8"><h4>Chart</h4></div>
+				
+				</div>
+				
+				<h4>Prices</h4>
+				
+				<div class="table-responsive" id="price_table">
+	
+				</div>
+				
+				<h4>News</h4>
+				
+				<div class="table-responsive" id="news_table">
+	
+				</div>
 			
 			</div>
-			<div class="col-sm-8"><h4>Chart</h4></div>
-			
+			<div id="work_idle" class="text-center">
+				<h4>N o t h i n g &nbsp; t o &nbsp; d o &nbsp; a t &nbsp; t h e &nbsp; m o m e n t . . .</h4>
 			</div>
-			
-			<h4>Prices</h4>
-			
-			<div class="table-responsive">
-			<table class="table table-hover">
-				<tr>
-					<th>MarketCode</th>
-					<th>CurrencyCode</th>
-					<th>ValorNumber</th>
-					<th>Date</th>
-					<th>ValueType</th>
-					<th>StatisticType</th>
-					<th>ValueStyle</th>
-					<th>Value</th>
-				</tr>
-			</table>
-			</div>
-			
-			<h4>News</h4>
-			
-			
 		</div>
-		<div class="col-sm-4"><h3>Queue</h3><h3>User Score</h3></div>
+		<div class="col-sm-4"><h3>Queue</h3>
+		
+		<p id="queueSize"></p>
+		
+		<h3>User Score</h3></div>
 	</div>
 <div>
     
-    <div id="conversationDiv">
-        <strong><label id="name"></label></strong>
-        <p>&nbsp;</p>
-        
-       <div id="outlier">
-       <br>
-       	Price Information:
-       	<pre id="info">
-       	</pre>
-       	
-        <button id="done" onclick="sendName();">Done</button>
-        
-        </div>
-    </div>
+
 </div>
 </div>
+
+<!-- Templates -->
+
+<script id="template-prices" type="text/x-handlebars-template">
+	<table class="table table-hover">
+		<tr>
+			<th>Listing</th>
+			<th>Date</th>
+			<th>VAT / STT</th>
+			<th>VAL</th>
+			<th>Value</th>
+		</tr>
+		{{#each prices}}
+
+	{{#ifItemSelected gsn}}
+  		<tr style="background-color: #FF0000">
+	{{else}}
+		<tr>
+	{{/ifItemSelected}}
+			<td>{{marketCode}} / {{currencyCode}} / {{valorNumber}}</td>
+			<td>{{formatDate date}}</td>
+			<td>{{valueType}} / {{statisticType}}</td>
+			<td>{{valueStyle}}</td>
+			<td>{{value}}</td>
+		</tr>
+  		{{/each}}		
+	</table>
+</script>
+
+<script id="template-news" type="text/x-handlebars-template">
+	<table class="table table-hover">
+		<tr>
+			<th>Date</th>
+			<th>Headline</th>
+		</tr>
+		{{#each news}}
+		<tr>
+			<td>{{formatDate date}}</td>
+			<td>{{headline}}</td>
+		</tr>
+		{{/each}}
+	</table>
+</script>
+
+<script id="template-users" type="text/x-handlebars-template">
+	<table class="table table-hover">
+		<tr>
+			<th>User</th>
+			<th>verified</th>
+		</tr>
+		{{#each users}}
+		<tr>
+			<td>{{name}}</td>
+			<td>{{verified}}</td>
+		</tr>
+		{{/each}}
+	</table>
+</script>
+
 </body>
 </html>
