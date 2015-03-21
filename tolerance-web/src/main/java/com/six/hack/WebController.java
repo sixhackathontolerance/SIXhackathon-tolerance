@@ -28,15 +28,9 @@ public class WebController {
     @MessageMapping("/verified")
     public void done(Verified verified, Principal principal) throws Exception {
         users.get(principal.getName()).idle();
+
         System.out.println("controller set " + principal.getName() + " to idle");
-    }
-
-    public void toQueue(Outlier outlier) {
-        queue.offer(outlier);
-    }
-
-    public Outlier next() {
-        return queue.poll();
+        sendUsers();
     }
 
     public Collection<User> users() {
@@ -48,16 +42,13 @@ public class WebController {
 
         messagingTemplate.convertAndSendToUser(user.getName(), "/outlier", outlier);
         System.out.println("queue worker handover task to user " + user.getName());
-        messagingTemplate.convertAndSend("/topic/queuesize", "{\"size\": " + queue.size() + "}");
-    }
-
-    public boolean queueEmpty() {
-        return queue.isEmpty();
+        sendUsers();
     }
 
     public void login(String username) {
         users.put(username, new User(username));
         System.out.println("login user " + username);
+        sendUsers();
     }
 
     public void logout(String username) {
@@ -67,6 +58,32 @@ public class WebController {
         } else {
             users.remove(username);
             System.out.println("logout user " + username);
+            sendUsers();
         }
+    }
+
+    private void sendUsers() {
+        messagingTemplate.convertAndSend("/topic/users", users.values());
+    }
+
+    public boolean queueEmpty() {
+        return queue.isEmpty();
+    }
+
+    public void toQueue(Outlier outlier) {
+        queue.offer(outlier);
+        sendQueueSize();
+    }
+
+    public Outlier next() {
+        Outlier outlier = queue.poll();
+        if (outlier != null) {
+            sendQueueSize();
+        }
+        return outlier;
+    }
+
+    private void sendQueueSize() {
+        messagingTemplate.convertAndSend("/topic/queuesize", "{\"size\": " + queue.size() + "}");
     }
 }

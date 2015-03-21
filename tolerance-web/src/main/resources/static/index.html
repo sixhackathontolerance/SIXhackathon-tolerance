@@ -29,7 +29,8 @@
         
         $(function() {
 	        $("#work_idle").hide();
-	        
+	        $("#verified").attr("disabled", true);
+            
         	templatePrices = Handlebars.compile($("#template-prices").html());
         	templateNews = Handlebars.compile($("#template-news").html());
         	templateUsers = Handlebars.compile($("#template-users").html());
@@ -43,6 +44,7 @@
             $('#news_table').html(templateNews(a));
             $("#work_active").fadeIn( 1600, "linear");
             $("#work_idle").fadeOut( 1600, "linear");
+            $("#verified").removeAttr("disabled");
     	}
         
         Handlebars.registerHelper('ifItemSelected', function(priceGSN, options) {
@@ -63,16 +65,9 @@
             document.getElementById('disconnect').disabled = !connected;
             if(username == null) {
 	            $('#username').html('<strong>Hello</strong>');
+	            $("#verified").attr("disabled", true);
             } else {
 	            $('#username').html('<strong>Hello ' + username + '</strong>');
-            }
-            if(connected) {
-           	 $('#conversationDiv').show();
-           	 $('#name').html(username);
-            } else {
-            	$('#conversationDiv').hide();
-            	$('#outlier').hide();
-            	
             }
         }
 
@@ -92,6 +87,10 @@
                 stompClient.subscribe('/user/' + username + '/outlier', function(outlier) {
                 	handleOutlier(outlier);
                 });
+                stompClient.subscribe('/topic/users', function(users){
+                	var a = {"users" : JSON.parse(users.body) };
+                	$('#users_table').html(templateUsers(a));
+                });
             });
         }
 
@@ -106,10 +105,8 @@
         function sendVerified() {
            $("#work_active").fadeOut( 1600, "linear");
            $("#work_idle").fadeIn( 1600, "linear");
+           $("#verified").attr("disabled", true);
            stompClient.send("/app/verified", {}, JSON.stringify({ 'name': username }));
-        }
-
-        function showGreeting(message) {
         }
         
     </script>
@@ -132,7 +129,7 @@
             <li><p class="navbar-text" id="username"></p></li>
             <li>        
             
-            <button id="done" class="btn btn-default navbar-btn" onclick="sendVerified();">verified</button>
+            <button id="verified" class="btn btn-default navbar-btn" onclick="sendVerified();">verified</button>
             <button id="connect" class="btn btn-default navbar-btn" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" class="btn btn-default navbar-btn" onclick="disconnect();">Disconnect</button></li>
           </ul>
@@ -183,7 +180,13 @@
 		
 		<p id="queueSize"></p>
 		
-		<h3>User Score</h3></div>
+		<h3>User Score</h3>
+		
+					<div class="table-responsive" id="users_table">
+	
+				</div>
+		
+		</div>
 	</div>
 <div>
     
@@ -238,11 +241,13 @@
 	<table class="table table-hover">
 		<tr>
 			<th>User</th>
+			<th>Idle</th>
 			<th>verified</th>
 		</tr>
 		{{#each users}}
 		<tr>
 			<td>{{name}}</td>
+			<td>{{ready}}
 			<td>{{verified}}</td>
 		</tr>
 		{{/each}}

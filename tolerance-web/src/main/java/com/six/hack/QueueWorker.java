@@ -72,7 +72,7 @@ public class QueueWorker extends Thread {
             } else {
                 boolean found = false;
                 for (User participant : controller.users()) {
-                    if (participant.ready()) {
+                    if (participant.isReady()) {
                         Outlier outlier = controller.next();
 
                         outlier.setPrices(getRange(outlier.getPrice()));

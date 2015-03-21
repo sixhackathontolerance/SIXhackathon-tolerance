@@ -1,9 +1,9 @@
 package com.six.hack.model;
 
-
 public class User {
     private String name;
-    private Outlier outlier;
+    private int verified;
+    private boolean ready = true;
 
     public User(String name) {
         this.name = name;
@@ -13,15 +13,20 @@ public class User {
         return name;
     }
 
-    public boolean ready() {
-        return outlier == null;
+    public boolean isReady() {
+        return ready;
+    }
+
+    public int getVerified() {
+        return verified;
     }
 
     public void give(Outlier outlier) {
-        this.outlier = outlier;
+        ready = false;
     }
 
     public void idle() {
-        this.outlier = null;
+        verified++;
+        ready = true;
     }
 }
