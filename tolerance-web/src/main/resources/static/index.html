@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>tolerance</title>
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
-    <script src="stomp.js"></script>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Tolerance!</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+	
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/sockjs.min.js"></script>
+    <script src="js/stomp.js"></script>
+
     <script type="text/javascript">
         var stompClient = null;
         var username = null;
@@ -12,6 +24,11 @@
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
+            if(username == null) {
+	            $('#username').html('<strong>Hello</strong>');
+            } else {
+	            $('#username').text('<strong>Hello ' + username + '</strong>');
+            }
             if(connected) {
            	 $('#conversationDiv').show();
            	 $('#name').html(username);
@@ -59,13 +76,76 @@
     </script>
 </head>
 <body onload="disconnect()">
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Tolerance!</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><p class="navbar-text" id="username"></p></li>
+            <li>        
+            
+            <button id="done" class="btn btn-default navbar-btn" onclick="sendName();">verified</button>
+            <button id="connect" class="btn btn-default navbar-btn" onclick="connect();">Connect</button>
+        <button id="disconnect" disabled="disabled" class="btn btn-default navbar-btn" onclick="disconnect();">Disconnect</button></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<div class="container">
+
+	<div class="row">
+		<div class="col-sm-8">
+			<h3>Work</h3>
+			
+			<div class="row">
+			
+			<div class="col-sm-4">
+				
+			<h4>Probability</h4> 
+			
+			</div>
+			<div class="col-sm-8"><h4>Chart</h4></div>
+			
+			</div>
+			
+			<h4>Prices</h4>
+			
+			<div class="table-responsive">
+			<table class="table table-hover">
+				<tr>
+					<th>MarketCode</th>
+					<th>CurrencyCode</th>
+					<th>ValorNumber</th>
+					<th>Date</th>
+					<th>ValueType</th>
+					<th>StatisticType</th>
+					<th>ValueStyle</th>
+					<th>Value</th>
+				</tr>
+			</table>
+			</div>
+			
+			<h4>News</h4>
+			
+			
+		</div>
+		<div class="col-sm-4"><h3>Queue</h3><h3>User Score</h3></div>
+	</div>
 <div>
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
-    </div>
     
     <div id="conversationDiv">
         <strong><label id="name"></label></strong>
@@ -81,6 +161,7 @@
         
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>
