@@ -1,5 +1,6 @@
 package com.six.hack;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +24,9 @@ public class ToleranceChecker extends Thread {
 
     @Autowired
     private WebController controller;
-
+    private SimpleMahout simpleMahout;
     public ToleranceChecker() {
+    	simpleMahout = new SimpleMahout(Arrays.asList("897789","275191"));
     }
 
     @PostConstruct
@@ -35,8 +37,13 @@ public class ToleranceChecker extends Thread {
     @Override
     public void run() {
         while (true) {
-            readData();
-            break;
+        	Outlier outlier = simpleMahout.processNextLine();
+        	if(outlier != null)
+        	{
+        		controller.toQueue(outlier);
+        	}
+            //readData();
+            //break;
         }
     }
 
