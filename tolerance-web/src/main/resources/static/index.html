@@ -43,6 +43,9 @@
         });
         
     	function handleOutlier(outlier) {
+            $("#work_active").show();
+            $("#work_idle").hide();
+            
         	var a = JSON.parse(outlier.body);
         	outlierGSN = a.price.gsn;
         	
@@ -69,14 +72,14 @@
         		    ]
         		};
         	var options;
+        	
+        	ctx = document.getElementById("myChart").getContext("2d");
         	if (myLineChart != null) {
         		myLineChart.destroy();
         	} 
         	myLineChart = new Chart(ctx).Line(data, options);
             $('#price_table').html(templatePrices(a));
             $('#news_table').html(templateNews(a));
-            $("#work_active").fadeIn( 1600, "linear");
-            $("#work_idle").fadeOut( 1600, "linear");
             $("#verified").removeAttr("disabled");
     	}
         
