@@ -108,7 +108,7 @@ public class SimpleMahout {
 	        	        v.set(2, 1);
 	
 	        	        Vector r = classifiers.get(fields[4]).classify(v);
-	        	        Thread.sleep(1);
+	        	        Thread.sleep(10);
 	        	        //This is kind of hackish, and most likely wrong
 	        	        //but works to get at the values that lie outside the bounds
 	        	        //based upon the provided sample results, works for valor 897789 and 275191
