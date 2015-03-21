@@ -1,4 +1,4 @@
-package com.six.hack;
+package com.six.hack.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

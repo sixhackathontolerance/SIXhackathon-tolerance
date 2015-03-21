@@ -14,17 +14,16 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import com.six.hack.model.News;
+import com.six.hack.model.Outlier;
+import com.six.hack.model.Price;
+import com.six.hack.model.PriceStream;
+import com.six.hack.model.User;
 
 public class QueueWorker extends Thread {
     @Autowired
-    private OutlierQueue queue;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    private ParticipantRepository repository;
+    private WebController controller;
 
     public QueueWorker() {
     }
@@ -57,7 +56,7 @@ public class QueueWorker extends Thread {
         }
         for (Price price : new PriceStream()) {
             if (outlierGSN.contains(Long.valueOf(price.getGsn()))) {
-                queue.offer(new Outlier(price));
+                controller.toQueue(new Outlier(price));
             }
         }
     }
@@ -67,25 +66,25 @@ public class QueueWorker extends Thread {
         System.out.println("queue worker start");
         populateQueue();
         while (true) {
-            Outlier outlier = queue.next();
-            if (outlier == null) {
+
+            if (controller.queueEmpty()) {
                 sleep();
             } else {
                 boolean found = false;
-                for (Participant participant : repository.getActiveSessions()) {
+                for (User participant : controller.users()) {
                     if (participant.ready()) {
+                        Outlier outlier = controller.next();
+
                         outlier.setPrices(getRange(outlier.getPrice()));
                         outlier.setNews(getNews(outlier.getPrice()));
-                        participant.give(outlier);
-                        messagingTemplate.convertAndSendToUser(participant.getName(), "/outlier", outlier);
-                        System.out.println("queue worker handover task to user " + participant.getName());
-                        messagingTemplate.convertAndSend("/topic/queuesize", "{\"size\": " + queue.size() + "}");
+
+                        controller.toUser(participant, outlier);
+
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    queue.offer(outlier);
                     System.out.println("queue worker no user found");
                     sleep();
                 }

@@ -106,7 +106,7 @@
         function sendVerified() {
            $("#work_active").fadeOut( 1600, "linear");
            $("#work_idle").fadeIn( 1600, "linear");
-           stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+           stompClient.send("/app/verified", {}, JSON.stringify({ 'name': username }));
         }
 
         function showGreeting(message) {

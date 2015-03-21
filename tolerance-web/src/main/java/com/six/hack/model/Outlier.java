@@ -1,4 +1,4 @@
-package com.six.hack;
+package com.six.hack.model;
 
 import java.util.List;
 

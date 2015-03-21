@@ -1,10 +1,11 @@
-package com.six.hack;
+package com.six.hack.model;
 
-public class Participant {
+
+public class User {
     private String name;
     private Outlier outlier;
 
-    public Participant(String name) {
+    public User(String name) {
         this.name = name;
     }
 
